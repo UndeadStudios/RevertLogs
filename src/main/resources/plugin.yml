@@ -1,0 +1,10 @@
+name: RevertLogs
+version: 1.0
+main: com.undeadstudios.revertlogs.RevertLogsPlugin
+api-version: 1.21
+author: UndeadStudios
+
+permissions:
+  revertlogs.use:
+    description: Allows the player to revert stripped logs to normal logs
+    default: true
