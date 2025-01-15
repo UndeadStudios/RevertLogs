@@ -1,9 +1,11 @@
 package com.undeadstudios.revertlogs;
 
+import org.bukkit.Axis;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Orientable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -54,15 +56,20 @@ public class RevertLogsPlugin extends JavaPlugin implements Listener {
                     // Get the current block's BlockData
                     BlockData oldBlockData = event.getClickedBlock().getBlockData();
 
-                    // Set the new block type
+                    // Change the block type
                     event.getClickedBlock().setType(newBlockType);
 
-                    // Get the new block's BlockData and update it with properties from the old block
-                    BlockData newBlockData = event.getClickedBlock().getBlockData();
-                    newBlockData.merge(oldBlockData); // Merges compatible properties from the old block data
+                    // If the old block was Orientable (e.g., logs), handle its axis property
+                    if (oldBlockData instanceof Orientable oldOrientable) {
+                        Axis oldAxis = oldOrientable.getAxis();
 
-                    // Apply the updated BlockData to the new block
-                    event.getClickedBlock().setBlockData(newBlockData);
+                        // Apply the axis to the new block if it supports the Orientable interface
+                        if (event.getClickedBlock().getBlockData() instanceof Orientable newOrientable) {
+                            newOrientable.setAxis(oldAxis);
+                            event.getClickedBlock().setBlockData(newOrientable);
+                        }
+                    }
+
 
                     event.getPlayer().swingMainHand(); // Play the animation of swinging the axe
                     getLogger().info("Log reverted successfully.");
